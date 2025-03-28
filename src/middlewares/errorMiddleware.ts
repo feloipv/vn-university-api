@@ -20,8 +20,6 @@ export const errorHandler = (
     message: err.message || 'Internal Server Error',
   };
 
-  console.log('NODE_ENV:', process.env.NODE_ENV);
-
   if (String(process.env.NODE_ENV) === 'development') {
     response.errors = err.errors;
     response.stack = err.stack;

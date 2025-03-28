@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r module-alias/register dist/server.js",
-    "dev": "nodemon --exec ts-node src/server.ts",
+    "dev": "nodemon --quiet --exec ts-node src/server.ts",
     "build": "tsc"
   },
   "keywords": [],

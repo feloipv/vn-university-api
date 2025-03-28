@@ -1,3 +1,4 @@
+import { CustomError } from '@/utils/errorUtils';
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
@@ -18,7 +19,16 @@ const sendEmail = async (email: string, otp: string) => {
     text: `Your verification code is: ${otp}. This code will expire in 5 minutes.`,
   };
 
-  await transporter.sendMail(mailOptions);
+  const result = await transporter.sendMail(mailOptions);
+
+  if (result.rejected.length > 0) {
+    throw new CustomError(
+      `Email rejected for: ${result.rejected.join(', ')}`,
+      400,
+      [result.response]
+    );
+  }
+  return true;
 };
 
 export default sendEmail;

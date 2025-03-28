@@ -22,8 +22,7 @@ const signup = async (
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const otp = await generateOTP();
-    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    const { otp, otpExpiresAt } = await generateOTP();
 
     await User.create({
       userName,

@@ -1,6 +1,4 @@
-import { CustomError } from '@/utils/errorUtils';
 import { z } from 'zod';
-import { ZodSchema } from 'zod';
 
 export const userSchema = z.object({
   userName: z
@@ -72,16 +70,6 @@ export const activateUserSchema = userSchema
     otp: userSchema.shape.otp.unwrap().nonempty('OTP is required'),
   });
 
-export const validateData = <T>(schema: ZodSchema<T>, data: unknown): T => {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    throw new CustomError(
-      'Validation Error',
-      400,
-      result.error.errors.map((err) => err.message)
-    );
-  }
-  return result.data;
-};
+export const signinSchema = userSchema.pick({ email: true, password: true });
 
 export type UserType = z.infer<typeof userSchema>;

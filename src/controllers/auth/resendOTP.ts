@@ -1,8 +1,9 @@
 import sendEmail from '@/config/mailer';
 import User from '@/models/user';
-import { resendOtpSchema, validateData } from '@/schemas/auth';
+import { resendOtpSchema } from '@/schemas/auth';
 import { CustomError } from '@/utils/errorUtils';
-import { generateOTP } from '@/utils/generateOTP';
+import { generateOTP } from '@/utils/generateOTPUtils';
+import { validateData } from '@/utils/ValidateUtils';
 import { NextFunction, Request, Response } from 'express';
 
 const resendOTP = async (req: Request, res: Response, next: NextFunction) => {

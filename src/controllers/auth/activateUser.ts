@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import User from '@/models/user';
-import { activateUserSchema } from '@/schemas/auth';
-import { CustomError } from '@/utils/errorUtils';
 import { generateTokens } from '@/utils/generateTokensUtils';
-import { validateData } from '@/utils/ValidateUtils';
+import { IUser } from '@/interfaces/auth';
 
 const activateUser = async (
   req: Request,
@@ -11,25 +9,7 @@ const activateUser = async (
   next: NextFunction
 ) => {
   try {
-    const { email, otp } = validateData(activateUserSchema, req.body);
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new CustomError('User not found', 404);
-    }
-
-    if (user.isActivate) {
-      throw new CustomError('User already activated', 400);
-    }
-
-    if (
-      user.otp !== otp ||
-      !user.otpExpiresAt ||
-      user.otpExpiresAt < new Date()
-    ) {
-      throw new CustomError('Invalid or expired OTP', 400);
-    }
-
+    const { email } = req.user as IUser;
     const newUser = await User.findOneAndUpdate(
       { email },
       {

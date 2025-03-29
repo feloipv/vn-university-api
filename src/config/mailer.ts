@@ -13,10 +13,21 @@ const transporter = nodemailer.createTransport({
 
 const sendEmail = async (email: string, otp: string) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: String(process.env.EMAIL_USER),
     to: email,
-    subject: 'Account Activation',
-    text: `Your verification code is: ${otp}. This code will expire in 5 minutes.`,
+    subject: 'Your One-Time Password (OTP)',
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #2d89ef; text-align: center;">Your OTP Code</h2>
+        <p>Hello,</p>
+        <p>Your One-Time Password (OTP) is:</p>
+        <p style="font-size: 24px; font-weight: bold; color: #2d89ef; text-align: center;">${otp}</p>
+        <p>This code is valid for <strong>5 minutes</strong>. Please do not share it with anyone.</p>
+        <p>If you did not request this code, please ignore this email.</p>
+        <hr style="border: none; border-top: 1px solid #ddd;">
+        <p style="text-align: center; color: #888; font-size: 12px;">&copy; ${new Date().getFullYear()} [Your Company Name]. All rights reserved.</p>
+      </div>
+    `,
   };
 
   const result = await transporter.sendMail(mailOptions);

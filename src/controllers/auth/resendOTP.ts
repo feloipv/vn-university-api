@@ -1,6 +1,6 @@
 import sendEmail from '@/config/mailer';
 import User from '@/models/user';
-import { resendOtpSchema } from '@/schemas/auth';
+import { sendOtpSchema } from '@/schemas/auth';
 import { CustomError } from '@/utils/errorUtils';
 import { generateOTP } from '@/utils/generateOTPUtils';
 import { validateData } from '@/utils/ValidateUtils';
@@ -8,12 +8,12 @@ import { NextFunction, Request, Response } from 'express';
 
 const resendOTP = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email } = validateData(resendOtpSchema, req.body);
+    const { email } = validateData(sendOtpSchema, req.body);
 
-    const user = await User.findOne({ email, isActivate: false });
+    const user = await User.findOne({ email });
 
     if (!user) {
-      throw new CustomError('User not found or already activated.', 400);
+      throw new CustomError('Incorrect email.', 400);
     }
 
     const now = Date.now();
@@ -28,14 +28,14 @@ const resendOTP = async (req: Request, res: Response, next: NextFunction) => {
     const { otp, otpExpiresAt } = await generateOTP();
 
     await User.findOneAndUpdate(
-      { email, isActivate: false },
+      { email },
       { otp, otpExpiresAt },
       { new: true }
     );
 
     await sendEmail(email, otp);
 
-    res.status(200).json({ message: 'OTP resent successfully.' });
+    res.status(200).json({ message: 'OTP sent successfully.' });
   } catch (error) {
     next(error);
   }

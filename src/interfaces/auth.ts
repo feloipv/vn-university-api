@@ -13,3 +13,9 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+declare module 'express' {
+  export interface Request {
+    user?: IUser;
+  }
+}

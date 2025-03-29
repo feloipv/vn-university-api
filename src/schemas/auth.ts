@@ -62,14 +62,17 @@ export const signupSchema = userSchema
     path: ['confirmPassword'],
   });
 
-export const resendOtpSchema = userSchema.pick({ email: true });
+export const resetPasswordSchema = signupSchema._def.schema.pick({
+  password: true,
+  confirmPassword: true,
+});
 
-export const activateUserSchema = userSchema
+export const sendOtpSchema = userSchema.pick({ email: true });
+
+export const verifyOtpSchema = userSchema
   .pick({ email: true, otp: true })
   .extend({
     otp: userSchema.shape.otp.unwrap().nonempty('OTP is required'),
   });
 
 export const signinSchema = userSchema.pick({ email: true, password: true });
-
-export type UserType = z.infer<typeof userSchema>;

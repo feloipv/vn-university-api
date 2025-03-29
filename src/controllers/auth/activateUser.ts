@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import User from '@/models/user';
-import { activateUserSchema, validateData } from '@/schemas/auth';
+import { activateUserSchema } from '@/schemas/auth';
 import { CustomError } from '@/utils/errorUtils';
-import { generateTokens } from '@/utils/generateTokens';
+import { generateTokens } from '@/utils/generateTokensUtils';
+import { validateData } from '@/utils/ValidateUtils';
 
-export const activateUser = async (
+const activateUser = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -56,3 +57,5 @@ export const activateUser = async (
     next(error);
   }
 };
+
+export default activateUser;

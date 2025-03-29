@@ -1,12 +1,11 @@
-import { signupSchema, validateData } from '@/schemas/auth';
+import { signupSchema } from '@/schemas/auth';
 import { CustomError } from '@/utils/errorUtils';
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { generateTokens } from '@/utils/generateTokens';
-import { IUser } from '@/interfaces/auth';
-import { generateOTP } from '@/utils/generateOTP';
+import { generateOTP } from '@/utils/generateOTPUtils';
 import sendEmail from '@/config/mailer';
 import User from '@/models/user';
+import { validateData } from '@/utils/ValidateUtils';
 
 const signup = async (
   req: Request,

@@ -6,7 +6,7 @@ import { generateOTP } from '@/utils/generateOTPUtils';
 import { validateData } from '@/utils/ValidateUtils';
 import { NextFunction, Request, Response } from 'express';
 
-const resendOTP = async (req: Request, res: Response, next: NextFunction) => {
+const sendOTP = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email } = validateData(sendOtpSchema, req.body);
 
@@ -41,4 +41,4 @@ const resendOTP = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default resendOTP;
+export default sendOTP;

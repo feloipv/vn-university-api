@@ -4,8 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 interface ErrorResponse {
   statusCode: number;
   message: string;
-  errors?: any[];
-  stack?: string;
+  errors?: string[];
 }
 
 export const errorHandler = (
@@ -15,17 +14,12 @@ export const errorHandler = (
   _next: NextFunction
 ): void => {
   const statusCode = err.statusCode || 500;
+
   const response: ErrorResponse = {
     statusCode,
     message: err.message || 'Internal Server Error',
+    errors: err.errors,
   };
-
-  if (String(process.env.NODE_ENV) === 'development') {
-    response.errors = err.errors;
-    response.stack = err.stack;
-  }
-
-  console.error(`[${new Date().toISOString()}] ERROR:`, err);
 
   res.status(statusCode).json(response);
 };

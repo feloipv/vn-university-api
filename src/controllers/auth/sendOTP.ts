@@ -20,9 +20,15 @@ const sendOTP = async (req: Request, res: Response, next: NextFunction) => {
     if (
       user.otp &&
       user.otpExpiresAt &&
-      now - user.otpExpiresAt.getTime() < 60 * 1000
+      now - user.updatedAt.getTime() < 30 * 1000
     ) {
-      throw new CustomError('Please wait before requesting a new OTP.', 429);
+      const remainingSeconds = Math.ceil(
+        (30 * 1000 - (now - user.updatedAt.getTime())) / 1000
+      );
+      throw new CustomError(
+        `Please wait ${remainingSeconds}s before requesting a new OTP.`,
+        429
+      );
     }
 
     const { otp, otpExpiresAt } = await generateOTP();

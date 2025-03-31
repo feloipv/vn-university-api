@@ -23,7 +23,7 @@ const signin = async (
     if (!isMatch) throw new CustomError('Incorrect email or password', 401);
 
     const { accessToken, refreshToken } = generateTokens(String(user?._id));
-    res.cookie('access_token', accessToken, {
+    res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       sameSite: 'none',

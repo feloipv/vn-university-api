@@ -1,5 +1,8 @@
 import { CustomError } from '@/utils/errorUtils';
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -25,7 +28,7 @@ const sendEmail = async (email: string, otp: string) => {
         <p>This code is valid for <strong>5 minutes</strong>. Please do not share it with anyone.</p>
         <p>If you did not request this code, please ignore this email.</p>
         <hr style="border: none; border-top: 1px solid #ddd;">
-        <p style="text-align: center; color: #888; font-size: 12px;">&copy; ${new Date().getFullYear()} [Your Company Name]. All rights reserved.</p>
+        <p style="text-align: center; color: #888; font-size: 12px;">&copy; ${new Date().getFullYear()} [VN University]. All rights reserved.</p>
       </div>
     `,
   };

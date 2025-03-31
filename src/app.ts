@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db';
 import cookieParser from 'cookie-parser';
 import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware';
-import authRouter from '@/routes/auth';
+import authRouter from './routes/auth';
 
 dotenv.config();
 

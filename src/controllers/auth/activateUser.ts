@@ -23,13 +23,13 @@ const activateUser = async (
     const { accessToken, refreshToken } = generateTokens(String(newUser?._id));
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
     });
 
     res.status(200).json({ message: 'User activated successfully' });

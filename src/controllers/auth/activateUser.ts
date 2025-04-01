@@ -32,7 +32,7 @@ const activateUser = async (
       sameSite: 'none',
     });
 
-    res.status(200).json({ message: 'User activated successfully' });
+    res.status(200).json({ message: 'Activated successfully' });
   } catch (error) {
     next(error);
   }

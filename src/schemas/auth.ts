@@ -62,10 +62,16 @@ export const signupSchema = userSchema
     path: ['confirmPassword'],
   });
 
-export const resetPasswordSchema = signupSchema._def.schema.pick({
-  password: true,
-  confirmPassword: true,
-});
+export const resetPasswordSchema = signupSchema._def.schema
+  .pick({
+    password: true,
+    confirmPassword: true,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message:
+      'Passwords do not match. Please ensure both passwords are identical',
+    path: ['confirmPassword'],
+  });
 
 export const sendOtpSchema = userSchema.pick({ email: true });
 

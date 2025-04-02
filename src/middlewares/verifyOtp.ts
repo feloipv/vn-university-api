@@ -4,7 +4,7 @@ import { CustomError } from '@/utils/errorUtils';
 import { validateData } from '@/utils/ValidateUtils';
 import { NextFunction, Request, Response } from 'express';
 
-const verifyOtp = async (req: Request, res: Response, next: NextFunction) => {
+const verifyOtp = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const { email, otp } = validateData(verifyOtpSchema, req.body);
 

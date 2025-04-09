@@ -8,13 +8,12 @@ const authenticate = async (
   _res: Response,
   next: NextFunction
 ) => {
-  const accessToken = req.cookies?.accessToken;
-
-  if (!accessToken) {
-    throw new CustomError('You must log in to perform this action.', 401);
-  }
-
   try {
+    const accessToken = req.cookies?.accessToken;
+    if (!accessToken) {
+      throw new CustomError('You must log in to perform this action.', 401);
+    }
+
     const decoded = jwt.verify(
       accessToken,
       process.env.ACCESS_TOKEN_SECRET as string

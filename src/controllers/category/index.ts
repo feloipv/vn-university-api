@@ -1,3 +1,5 @@
-import addCategory from '@/controllers/category/addCategory';
+import createCategory from '@/controllers/category/createCategory';
+import deleteCategory from '@/controllers/category/deleteCategory';
+import updateCategory from './updateCategory';
 
-export const cateCtrl = { addCategory };
+export const cateCtrl = { createCategory, deleteCategory, updateCategory };

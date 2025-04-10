@@ -1,17 +1,17 @@
 // src/controllers/category.controller.ts
 import { CategoryModel } from '@/models/category';
-import { categorySchema } from '@/schemas/category';
+import { createCategoryschema } from '@/schemas/category';
 import { CustomError } from '@/utils/errorUtils';
 import { validateData } from '@/utils/ValidateUtils';
 import { NextFunction, Request, Response } from 'express';
 
-const addCategory = async (
+const createCategory = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const data = validateData(categorySchema, req.body);
+    const data = validateData(createCategoryschema, req.body);
 
     const existing = await CategoryModel.findOne({ name: data.name });
     if (existing) throw new CustomError('Category already exists', 400);
@@ -20,7 +20,7 @@ const addCategory = async (
 
     res.status(201).json({
       success: true,
-      message: 'Create category successfully',
+      message: 'Category created successfully',
       data: newCategory,
     });
   } catch (error) {
@@ -28,4 +28,4 @@ const addCategory = async (
   }
 };
 
-export default addCategory;
+export default createCategory;

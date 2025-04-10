@@ -34,11 +34,11 @@ const authenticate = async (
     next();
   } catch (error) {
     if (error instanceof Error && error.name === 'JsonWebTokenError') {
-      throw new CustomError('Invalid Token', 401);
+      return next(new CustomError('Invalid Token', 401));
     }
 
     if (error instanceof Error && error.name === 'TokenExpiredError') {
-      throw new CustomError('Token has expired', 401);
+      return next(new CustomError('Token has expired', 401));
     }
 
     next(error);

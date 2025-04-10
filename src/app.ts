@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware';
 import authRouter from '@/routes/auth';
 import cateRouter from './routes/category';
+import univerRouter from './routes/university';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(
 
 app.use(`${basePath}`, authRouter);
 app.use(`${basePath}`, cateRouter);
+app.use(`${basePath}`, univerRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -10,5 +10,9 @@ univerRouter.patch(
   authenticate,
   univerCtrl.updateUniversity
 );
-
+univerRouter.delete(
+  '/university/:id',
+  authenticate,
+  univerCtrl.deleteUniversity
+);
 export default univerRouter;

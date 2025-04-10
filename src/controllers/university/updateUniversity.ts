@@ -4,18 +4,21 @@ import { universitySchema } from '@/schemas/university';
 import { CustomError } from '@/utils/errorUtils';
 import { validateData } from '@/utils/ValidateUtils';
 import { NextFunction, Request, Response } from 'express';
+import mongoose from 'mongoose';
 
 const updateUniversity = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { id } = req.params;
 
     const data = validateData(universitySchema.partial(), req.body);
 
-    const university = await UniversityModel.findById(id);
+    const university = await UniversityModel.findById(id).session(session);
     if (!university) {
       throw new CustomError('University not found', 404);
     }
@@ -23,7 +26,7 @@ const updateUniversity = async (
     if (data.categoryIds && data.categoryIds.length > 0) {
       const existingCategories = await CategoryModel.find({
         _id: { $in: data.categoryIds },
-      });
+      }).session(session);
 
       const existingIds = existingCategories.map((c) => c._id.toString());
 
@@ -50,14 +53,16 @@ const updateUniversity = async (
       if (toRemove && toRemove.length > 0) {
         await CategoryModel.updateMany(
           { _id: { $in: toRemove } },
-          { $pull: { universityIds: university._id } }
+          { $pull: { universityIds: university._id } },
+          { session }
         );
       }
 
       if (toAdd.length > 0) {
         await CategoryModel.updateMany(
           { _id: { $in: toAdd } },
-          { $addToSet: { universityIds: university._id } }
+          { $addToSet: { universityIds: university._id } },
+          { session }
         );
       }
     }
@@ -65,8 +70,10 @@ const updateUniversity = async (
     const updatedUniversity = await UniversityModel.findByIdAndUpdate(
       id,
       data,
-      { new: true }
+      { new: true, session }
     );
+
+    await session.commitTransaction();
 
     res.status(200).json({
       success: true,
@@ -74,7 +81,10 @@ const updateUniversity = async (
       data: updatedUniversity,
     });
   } catch (error) {
+    await session.abortTransaction();
     next(error);
+  } finally {
+    session.endSession();
   }
 };
 

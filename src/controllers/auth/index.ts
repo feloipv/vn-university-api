@@ -4,6 +4,7 @@ import activateUser from '@/controllers/auth/activateUser';
 import signin from '@/controllers/auth/signin';
 import resetPassword from '@/controllers/auth/resetPassword';
 import signout from '@/controllers/auth/signout';
+import refreshToken from '@/controllers/auth/refreshToken';
 
 export const authCtrl = {
   signup,
@@ -12,4 +13,5 @@ export const authCtrl = {
   activateUser,
   signin,
   resetPassword,
+  refreshToken,
 };

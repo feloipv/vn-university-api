@@ -9,12 +9,12 @@ const refreshToken = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const refreshToken = req.cookies?.refreshToken;
-  if (!refreshToken) {
-    throw new CustomError('Refresh token not provided', 401);
-  }
-
   try {
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) {
+      throw new CustomError('Refresh token not provided', 401);
+    }
+
     const decoded = jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET as string

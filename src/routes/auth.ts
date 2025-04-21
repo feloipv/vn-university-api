@@ -11,6 +11,6 @@ authRouter.post('/auth/signout', authCtrl.signout);
 authRouter.post('/auth/activate_user', verifyOtp, authCtrl.activateUser);
 authRouter.post('/auth/send_OTP', authCtrl.sendOTP);
 authRouter.post('/auth/reset_password', verifyOtp, authCtrl.resetPassword);
-authRouter.post('/auth/refresh_token', authenticate, authCtrl.refreshToken);
+authRouter.post('/auth/refresh_token', authCtrl.refreshToken);
 
 export default authRouter;

@@ -51,11 +51,11 @@ const refreshToken = async (
     });
   } catch (error) {
     if (error instanceof Error && error.name === 'JsonWebTokenError') {
-      throw new CustomError('Invalid Token', 400);
+      return next(new CustomError('Invalid Token', 400));
     }
 
     if (error instanceof Error && error.name === 'TokenExpiredError') {
-      throw new CustomError('Token has expired', 400);
+      return next(new CustomError('Token has expired', 400));
     }
     next(error);
   }

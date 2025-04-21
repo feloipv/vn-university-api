@@ -1,7 +1,7 @@
 import 'module-alias/register';
 import app from '@/app';
 
-const PORT = 8000;
+const PORT = 8080;
 
 app.listen(PORT, () => {
   const serverUrl = `http://localhost:${PORT}`;

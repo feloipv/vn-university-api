@@ -1,5 +1,4 @@
 import { authCtrl } from '@/controllers/auth';
-import authenticate from '@/middlewares/authenticate';
 import verifyOtp from '@/middlewares/verifyOtp';
 import express from 'express';
 

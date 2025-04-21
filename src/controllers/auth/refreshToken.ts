@@ -55,7 +55,7 @@ const refreshToken = async (
     }
 
     if (error instanceof Error && error.name === 'TokenExpiredError') {
-      next(new CustomError('Token has expired', 400));
+      return next(new CustomError('Token has expired', 400));
     }
     next(error);
   }

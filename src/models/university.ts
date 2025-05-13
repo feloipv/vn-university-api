@@ -5,12 +5,6 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 const universitySchema = new Schema<IuniversitySchema>(
   {
     name: { type: String, required: true },
-    categoryIds: [
-      {
-        type: Types.ObjectId,
-        ref: 'Category',
-      },
-    ],
     code: { type: String },
     location: { type: String, required: true },
     city: { type: String },
@@ -29,9 +23,15 @@ const universitySchema = new Schema<IuniversitySchema>(
       admissionMethod: { type: [String] },
       admissionLink: { type: String },
     },
-    trainingFields: { type: [String] },
+    trainingFieldIds: [
+      {
+        type: Types.ObjectId,
+        ref: 'Category',
+      },
+    ],
     tuition: {
       min: { type: Number },
+      max: { type: Number },
       unit: { type: String, default: 'VND/year' },
     },
     rating: { type: Number, default: 0 },

@@ -1,11 +1,33 @@
-import { cateCtrl } from '@/controllers/category';
+import { cateCtrl } from '@/controllers/trainingField';
 import authenticate from '@/middlewares/authenticate';
 import express from 'express';
 
-const cateRouter = express.Router();
+const trainingFieldRouter = express.Router();
 
-cateRouter.post('/categories', authenticate, cateCtrl.createCategory);
-cateRouter.patch('/categories/:id', authenticate, cateCtrl.updateCategory);
-cateRouter.delete('/categories/:id', authenticate, cateCtrl.deleteCategory);
+trainingFieldRouter.get(
+  '/training_fields',
+  authenticate,
+  cateCtrl.getTrainingField
+);
+trainingFieldRouter.get(
+  '/training_field/:id',
+  authenticate,
+  cateCtrl.getTrainingFieldById
+);
+trainingFieldRouter.post(
+  '/training_field',
+  authenticate,
+  cateCtrl.createTrainingField
+);
+trainingFieldRouter.patch(
+  '/training_field/:id',
+  authenticate,
+  cateCtrl.updateTrainingField
+);
+trainingFieldRouter.delete(
+  '/training_field/:id',
+  authenticate,
+  cateCtrl.deleteTrainingField
+);
 
-export default cateRouter;
+export default trainingFieldRouter;

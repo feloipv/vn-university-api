@@ -8,16 +8,6 @@ export const universitySchema = z.object({
     required_error: 'University name is required',
     invalid_type_error: 'University name must be a string',
   }),
-  categoryIds: z
-    .array(
-      z.string().refine(
-        (val) => isObjectId(val),
-        (val) => ({
-          message: `Invalid category ID: ${val}`,
-        })
-      )
-    )
-    .optional(),
   code: z.string().optional(),
   location: z.string({
     required_error: 'Location is required',
@@ -51,19 +41,28 @@ export const universitySchema = z.object({
     })
     .optional(),
 
-  trainingFields: z.array(z.string()).optional(),
+  trainingFieldIds: z.array(
+    z.string().refine(
+      (val) => isObjectId(val),
+      (val) => ({
+        message: `Invalid training field ID: ${val}`,
+      })
+    )
+  ),
 
   tuition: z
     .object({
       min: z.number({
         required_error: 'Minimum tuition is required',
       }),
+      max: z.number({
+        required_error: 'Maximum tuition is required',
+      }),
       unit: z.string().default('VND/year'),
     })
     .optional(),
-
   rating: z.number().min(0).max(5).default(0),
   isFeatured: z.boolean().default(false),
 });
 
-export type IuniversitySchema = z.infer<typeof universitySchema>;
+export type Iuniversity = z.infer<typeof universitySchema>;

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const isObjectId = (val: string) => Types.ObjectId.isValid(val);
 
-export const categorySchema = z.object({
+export const trainingFieldSchema = z.object({
   name: z
     .string({
       required_error: 'Name is required',
@@ -27,16 +27,16 @@ export const categorySchema = z.object({
         .refine(
           (val) => isObjectId(val),
           (val) => ({
-            message: `Invalid university ID: ${val}`,
+            message: `Invalid training field ID: ${val}`,
           })
         )
     )
     .optional(),
 });
 
-export const createCategoryschema = categorySchema.pick({
+export const createTrainingFieldschema = trainingFieldSchema.pick({
   name: true,
   description: true,
 });
 
-export type ICategory = z.infer<typeof categorySchema>;
+export type ITrainingField = z.infer<typeof trainingFieldSchema>;

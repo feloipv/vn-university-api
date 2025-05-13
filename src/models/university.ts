@@ -26,7 +26,7 @@ const universitySchema = new Schema<Iuniversity>(
     trainingFieldIds: [
       {
         type: Types.ObjectId,
-        ref: 'Category',
+        ref: 'TrainingField',
       },
     ],
     tuition: {

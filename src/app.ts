@@ -5,7 +5,7 @@ import connectDB from './config/db';
 import cookieParser from 'cookie-parser';
 import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware';
 import authRouter from '@/routes/auth';
-import trainingFieldRouter from './routes/category';
+import trainingFieldRouter from './routes/trainingField';
 import universityRouter from './routes/university';
 
 dotenv.config();

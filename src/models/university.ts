@@ -1,8 +1,8 @@
-import { IuniversitySchema } from '@/schemas/university';
+import { Iuniversity } from '@/schemas/university';
 import { PaginateModel, Schema, Types, model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
-const universitySchema = new Schema<IuniversitySchema>(
+const universitySchema = new Schema<Iuniversity>(
   {
     name: { type: String, required: true },
     code: { type: String },
@@ -45,7 +45,7 @@ const universitySchema = new Schema<IuniversitySchema>(
 
 universitySchema.plugin(mongoosePaginate);
 
-export const UniversityModel = model<
-  IuniversitySchema,
-  PaginateModel<IuniversitySchema>
->('University', universitySchema);
+export const UniversityModel = model<Iuniversity, PaginateModel<Iuniversity>>(
+  'University',
+  universitySchema
+);

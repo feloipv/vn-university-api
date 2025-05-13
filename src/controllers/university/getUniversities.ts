@@ -7,10 +7,19 @@ const getUniversities = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { page = 1, limit = 10, search = '' } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      city = '',
+      type = '',
+    } = req.query;
 
-    const searchRegex = new RegExp(search as string, 'i');
-    const query = search ? { name: searchRegex } : {};
+    const query: Record<string, any> = {};
+
+    if (search) query.name = new RegExp(search as string, 'i');
+    if (city) query.city = new RegExp(city as string, 'i');
+    if (type) query.type = new RegExp(type as string, 'i');
 
     const {
       docs: universities,

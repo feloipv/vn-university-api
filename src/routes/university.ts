@@ -5,6 +5,11 @@ import express from 'express';
 const universityRouter = express.Router();
 
 universityRouter.get('/universities', authenticate, univerCtrl.getUniversities);
+universityRouter.get(
+  '/university/:id',
+  authenticate,
+  univerCtrl.getUniversityById
+);
 universityRouter.post('/university', authenticate, univerCtrl.createUniversity);
 universityRouter.patch(
   '/university/:id',

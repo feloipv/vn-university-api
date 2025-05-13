@@ -2,11 +2,11 @@ import { UniversityModel } from '@/models/university';
 import { CustomError } from '@/utils/errorUtils';
 import { NextFunction, Request, Response } from 'express';
 
-export const getUniversityById = async (
+const getUniversityById = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -14,7 +14,7 @@ export const getUniversityById = async (
       await UniversityModel.findById(id).populate('trainingFieldIds');
     if (!university) throw new CustomError('University not found', 404);
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Get university successfully',
       data: university,
@@ -23,3 +23,5 @@ export const getUniversityById = async (
     next(error);
   }
 };
+
+export default getUniversityById;

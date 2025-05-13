@@ -1,4 +1,4 @@
-import { CategoryModel } from '@/models/category';
+import { TrainingFieldModel } from '@/models/trainingField';
 import { UniversityModel } from '@/models/university';
 import { universitySchema } from '@/schemas/university';
 import { CustomError } from '@/utils/errorUtils';
@@ -21,20 +21,20 @@ const createUniversity = async (
     );
     if (existing) throw new CustomError('University already exists', 400);
 
-    if (data.categoryIds && data.categoryIds.length > 0) {
-      const existingCategories = await CategoryModel.find({
-        _id: { $in: data.categoryIds },
+    if (data.trainingFieldIds && data.trainingFieldIds.length > 0) {
+      const existingCategories = await TrainingFieldModel.find({
+        _id: { $in: data.trainingFieldIds },
       }).session(session);
 
       const existingIds = existingCategories.map((c) => c._id.toString());
 
-      const invalidIds = data.categoryIds.filter(
+      const invalidIds = data.trainingFieldIds.filter(
         (id) => !existingIds.includes(id)
       );
 
       if (invalidIds.length > 0) {
         throw new CustomError(
-          'Some category IDs do not exist',
+          'Some training field IDs do not exist',
           400,
           invalidIds
         );
@@ -45,8 +45,8 @@ const createUniversity = async (
       session,
     });
 
-    await CategoryModel.updateMany(
-      { _id: { $in: data.categoryIds } },
+    await TrainingFieldModel.updateMany(
+      { _id: { $in: data.trainingFieldIds } },
       { $addToSet: { universityIds: newUniversity[0]._id } },
       { session }
     );

@@ -2,18 +2,18 @@ import { univerCtrl } from '@/controllers/university';
 import authenticate from '@/middlewares/authenticate';
 import express from 'express';
 
-const univerRouter = express.Router();
+const universityRouter = express.Router();
 
-univerRouter.get('/universities', authenticate, univerCtrl.getUniversities);
-univerRouter.post('/university', authenticate, univerCtrl.createUniversity);
-univerRouter.patch(
+universityRouter.get('/universities', authenticate, univerCtrl.getUniversities);
+universityRouter.post('/university', authenticate, univerCtrl.createUniversity);
+universityRouter.patch(
   '/university/:id',
   authenticate,
   univerCtrl.updateUniversity
 );
-univerRouter.delete(
+universityRouter.delete(
   '/university/:id',
   authenticate,
   univerCtrl.deleteUniversity
 );
-export default univerRouter;
+export default universityRouter;

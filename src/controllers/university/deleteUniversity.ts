@@ -1,4 +1,4 @@
-import { CategoryModel } from '@/models/category';
+import { TrainingFieldModel } from '@/models/trainingField';
 import { UniversityModel } from '@/models/university';
 import { CustomError } from '@/utils/errorUtils';
 import { NextFunction, Request, Response } from 'express';
@@ -18,15 +18,12 @@ const deleteUniversity = async (
     const university = await UniversityModel.findById(id).session(session);
     if (!university) throw new CustomError('University not found', 404);
 
-    await Promise.all([
-      UniversityModel.findByIdAndDelete(id, { session }),
-      CategoryModel.updateMany(
-        { universityIds: id },
-        { $pull: { universityIds: id } },
-        { session }
-      ),
-    ]);
-
+    await UniversityModel.findByIdAndDelete(id, { session });
+    await TrainingFieldModel.updateMany(
+      { universityIds: id },
+      { $pull: { universityIds: id } },
+      { session }
+    );
     await session.commitTransaction();
 
     res.status(200).json({

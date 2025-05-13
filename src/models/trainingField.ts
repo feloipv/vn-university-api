@@ -1,9 +1,9 @@
-import { ICategory } from '@/schemas/category';
+import { ITrainingField } from '@/schemas/trainingField';
 import { PaginateModel } from 'mongoose';
 import { Schema, Types, model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
-const categorySchema = new Schema<ICategory>(
+const trainingFieldSchema = new Schema<ITrainingField>(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String },
@@ -12,9 +12,9 @@ const categorySchema = new Schema<ICategory>(
   { timestamps: true, versionKey: false }
 );
 
-categorySchema.plugin(mongoosePaginate);
+trainingFieldSchema.plugin(mongoosePaginate);
 
-export const CategoryModel = model<ICategory, PaginateModel<ICategory>>(
-  'Category',
-  categorySchema
-);
+export const TrainingFieldModel = model<
+  ITrainingField,
+  PaginateModel<ITrainingField>
+>('TrainingField', trainingFieldSchema);

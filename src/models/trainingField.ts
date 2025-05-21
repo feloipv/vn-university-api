@@ -8,6 +8,7 @@ const trainingFieldSchema = new Schema<ITrainingField>(
     name: { type: String, required: true, unique: true },
     description: { type: String },
     universityIds: [{ type: Types.ObjectId, ref: 'University' }],
+    majorIds: [{ type: Types.ObjectId, ref: 'Major' }],
   },
   { timestamps: true, versionKey: false }
 );

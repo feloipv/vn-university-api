@@ -1,7 +1,5 @@
-import { Types } from 'mongoose';
+import { isObjectId } from '@/utils/ValidateUtils';
 import { z } from 'zod';
-
-const isObjectId = (val: string) => Types.ObjectId.isValid(val);
 
 export const universitySchema = z.object({
   name: z.string({
@@ -24,7 +22,6 @@ export const universitySchema = z.object({
     .min(1000)
     .max(new Date().getFullYear())
     .optional(),
-
   description: z.string().optional(),
   website: z.string().url('Website must be a valid URL').optional(),
   logo: z.string().url('Logo must be a valid URL').optional(),
@@ -33,22 +30,53 @@ export const universitySchema = z.object({
 
   admissionInfo: z
     .object({
-      admissionMethod: z.array(z.string()).optional(),
-      admissionLink: z
-        .string()
-        .url('Admission link must be a valid URL')
+      methods: z
+        .array(
+          z.object({
+            title: z.string(),
+            description: z.string().optional(),
+            conditions: z.array(z.string()).optional(),
+            documents: z.array(z.string()).optional(),
+          })
+        )
         .optional(),
     })
     .optional(),
 
-  trainingFieldIds: z.array(
-    z.string().refine(
-      (val) => isObjectId(val),
-      (val) => ({
-        message: `Invalid training field ID: ${val}`,
+  trainingFields: z
+    .array(
+      z.object({
+        trainingFieldId: isObjectId('Training field ID'),
+        majors: z.array(
+          z.object({
+            majorId: isObjectId('Major ID'),
+            scores: z
+              .array(
+                z.object({
+                  year: z.number({
+                    required_error: 'Year is required',
+                  }),
+                  thpt: z.number().optional(),
+                  hocBa: z.number().optional(),
+                })
+              )
+              .optional(),
+          })
+        ),
       })
     )
-  ),
+    .optional(),
+
+  campuses: z
+    .array(
+      z.object({
+        name: z.string().optional(),
+        address: z.string().optional(),
+        phone: z.string().optional(),
+        email: z.string().optional(),
+      })
+    )
+    .optional(),
 
   tuition: z
     .object({
@@ -61,8 +89,9 @@ export const universitySchema = z.object({
       unit: z.string().default('VND/year'),
     })
     .optional(),
+
   rating: z.number().min(0).max(5).default(0),
   isFeatured: z.boolean().default(false),
 });
 
-export type Iuniversity = z.infer<typeof universitySchema>;
+export type IUniversity = z.infer<typeof universitySchema>;

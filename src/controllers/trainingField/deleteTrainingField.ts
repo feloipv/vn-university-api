@@ -1,6 +1,7 @@
 import { TrainingFieldModel } from '@/models/trainingField';
 import { UniversityModel } from '@/models/university';
-import { Iuniversity } from '@/schemas/university';
+import { MajorModel } from '@/models/major';
+import { IUniversity } from '@/schemas/university';
 import { CustomError } from '@/utils/errorUtils';
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
@@ -18,19 +19,30 @@ const deleteTrainingField = async (
 
     const trainingField =
       await TrainingFieldModel.findById(id).session(session);
-    if (!trainingField) {
-      throw new CustomError('Training Field not found', 404);
-    }
+    if (!trainingField) throw new CustomError('Training Field not found', 404);
 
     await TrainingFieldModel.findByIdAndDelete(id, { session });
 
-    await UniversityModel.updateMany<Iuniversity>(
-      { trainingFieldIds: id },
-      { $pull: { trainingFieldIds: id } },
+    await UniversityModel.updateMany<IUniversity>(
+      {},
+      {
+        $pull: {
+          trainingFields: { trainingFieldId: trainingField._id },
+        },
+      },
+      { session }
+    );
+
+    await MajorModel.updateMany(
+      {},
+      {
+        $pull: { trainingFieldIds: trainingField._id },
+      },
       { session }
     );
 
     await session.commitTransaction();
+
     res.status(200).json({
       success: true,
       message: 'Training field deleted successfully',

@@ -1,5 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { IUser } from '@/interfaces/auth';
+import mongoosePaginate from 'mongoose-paginate-v2';
+import { PaginateModel } from 'mongoose';
+import { IUser } from '@/schemas/auth';
 
 const userSchema = new Schema<IUser>(
   {
@@ -23,5 +25,6 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-const User = model<IUser>('User', userSchema);
-export default User;
+userSchema.plugin(mongoosePaginate);
+
+export const UserModel = model<IUser, PaginateModel<IUser>>('User', userSchema);

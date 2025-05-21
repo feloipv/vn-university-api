@@ -1,13 +1,20 @@
 import { z } from 'zod';
 
+export const applyPasswordMatchRefine = <T extends z.ZodTypeAny>(schema: T) =>
+  schema.refine((data: any) => data.password === data.confirmPassword, {
+    message:
+      'Passwords do not match. Please ensure both passwords are identical',
+    path: ['confirmPassword'],
+  });
+
 export const userSchema = z.object({
   userName: z
-    .string({ required_error: 'Username is required' })
+    .string({ required_error: 'userName is required' })
     .min(
       3,
-      'Username must be at least 3 characters long for better readability'
+      'userName must be at least 3 characters long for better readability'
     )
-    .max(30, 'Username cannot exceed 30 characters to maintain consistency'),
+    .max(30, 'userName cannot exceed 30 characters to maintain consistency'),
   email: z
     .string({ required_error: 'Email is required' })
     .email('Invalid email format. Please enter a valid email address'),
@@ -49,29 +56,22 @@ export const userSchema = z.object({
   isActivate: z.boolean().default(false),
 });
 
-export const signupSchema = userSchema
-  .pick({ userName: true, email: true, password: true })
-  .extend({
-    confirmPassword: z
-      .string({ required_error: 'Confirm password is required' })
-      .min(6, 'Confirm password must be at least 6 characters long'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message:
-      'Passwords do not match. Please ensure both passwords are identical',
-    path: ['confirmPassword'],
-  });
+const confirmPasswordFields = z.object({
+  confirmPassword: z
+    .string({ required_error: 'Confirm password is required' })
+    .min(6, 'Confirm password must be at least 6 characters long'),
+});
 
-export const resetPasswordSchema = signupSchema._def.schema
-  .pick({
-    password: true,
-    confirmPassword: true,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message:
-      'Passwords do not match. Please ensure both passwords are identical',
-    path: ['confirmPassword'],
-  });
+export const signupSchema = applyPasswordMatchRefine(
+  userSchema
+    .pick({ userName: true, email: true, password: true })
+    .merge(confirmPasswordFields)
+    .strict()
+);
+
+export const resetPasswordSchema = applyPasswordMatchRefine(
+  userSchema.pick({ password: true }).merge(confirmPasswordFields)
+);
 
 export const sendOtpSchema = userSchema.pick({ email: true });
 
@@ -82,3 +82,5 @@ export const verifyOtpSchema = userSchema
   });
 
 export const signinSchema = userSchema.pick({ email: true, password: true });
+
+export type IUser = z.infer<typeof userSchema>;

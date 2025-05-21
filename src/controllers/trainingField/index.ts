@@ -4,7 +4,7 @@ import getTrainingFieldById from './getOneTrainingField';
 import getTrainingField from './getTrainingField';
 import updateTrainingField from './updateTrainingField';
 
-export const cateCtrl = {
+export const tfCtrl = {
   createTrainingField,
   deleteTrainingField,
   updateTrainingField,

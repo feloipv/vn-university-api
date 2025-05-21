@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import User from '@/models/user';
 import { signinSchema } from '@/schemas/auth';
 import { CustomError } from '@/utils/errorUtils';
 import { validateData } from '@/utils/ValidateUtils';
 import bcrypt from 'bcryptjs';
 import { generateTokens } from '@/utils/generateTokensUtils';
+import { UserModel } from '@/models/user';
 
 const signin = async (
   req: Request,
@@ -14,7 +14,7 @@ const signin = async (
   try {
     const { email, password } = validateData(signinSchema, req.body);
 
-    const user = await User.findOne({ email });
+    const user = await UserModel.findOne({ email });
     if (!user) throw new CustomError('Incorrect email or password', 401);
 
     if (!user.isActivate) throw new CustomError('Account not activated.', 403);

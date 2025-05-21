@@ -7,6 +7,7 @@ import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware';
 import authRouter from '@/routes/auth';
 import trainingFieldRouter from './routes/trainingField';
 import universityRouter from './routes/university';
+import majorRouter from './routes/major';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(
 app.use(`${basePath}`, authRouter);
 app.use(`${basePath}`, trainingFieldRouter);
 app.use(`${basePath}`, universityRouter);
+app.use(`${basePath}`, majorRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

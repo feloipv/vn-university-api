@@ -11,15 +11,15 @@ const getTrainingFieldById = async (
   try {
     const { id } = req.params;
 
-    const trainingField =
-      await TrainingFieldModel.findById(id).populate<ITrainingField>(
-        'universityIds'
-      );
+    const trainingField = await TrainingFieldModel.findById(id)
+      .populate<ITrainingField>('universityIds', '-trainingFields')
+      .populate('majorIds', 'name description');
+
     if (!trainingField) throw new CustomError('Training field not found', 404);
 
     res.status(200).json({
       success: true,
-      message: 'Get training fields successfully',
+      message: 'Get training field successfully',
       data: trainingField,
     });
   } catch (error) {

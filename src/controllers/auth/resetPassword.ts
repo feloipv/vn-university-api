@@ -1,22 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
-import { IUser } from '@/interfaces/auth';
-import User from '@/models/user';
+import { IUser } from '@/schemas/auth';
+import { UserModel } from '@/models/user';
 import bcrypt from 'bcryptjs';
 import { validateData } from '@/utils/ValidateUtils';
 import { resetPasswordSchema } from '@/schemas/auth';
+import { AuthenticatedRequest } from '@/interfaces/auth';
 
 const resetPassword = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const { email } = req.user as IUser;
+    const { email } = (req as unknown as AuthenticatedRequest).user as IUser;
 
     const { password } = validateData(resetPasswordSchema, req.body);
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.findOneAndUpdate(
+    await UserModel.findOneAndUpdate(
       { email },
       { password: hashedPassword, otp: null, otpExpiresAt: null }
     );

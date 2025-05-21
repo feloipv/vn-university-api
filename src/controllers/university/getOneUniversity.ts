@@ -10,8 +10,11 @@ const getUniversityById = async (
   try {
     const { id } = req.params;
 
-    const university =
-      await UniversityModel.findById(id).populate('trainingFieldIds');
+    const university = await UniversityModel.findById(id)
+      .populate('trainingFields.trainingFieldId', '-majorIds -universityIds')
+      .populate('trainingFields.majors.majorId', '-trainingFieldId')
+      .lean();
+
     if (!university) throw new CustomError('University not found', 404);
 
     res.status(200).json({

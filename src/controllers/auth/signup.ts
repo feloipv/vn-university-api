@@ -4,8 +4,8 @@ import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { generateOTP } from '@/utils/generateOTPUtils';
 import sendEmail from '@/config/mailer';
-import User from '@/models/user';
 import { validateData } from '@/utils/ValidateUtils';
+import { UserModel } from '@/models/user';
 
 const signup = async (
   req: Request,
@@ -15,7 +15,7 @@ const signup = async (
   try {
     const { userName, email, password } = validateData(signupSchema, req.body);
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       throw new CustomError('Email is already in use', 400);
     }
@@ -23,7 +23,7 @@ const signup = async (
     const hashedPassword = await bcrypt.hash(password, 10);
     const { otp, otpExpiresAt } = await generateOTP();
 
-    await User.create({
+    await UserModel.create({
       userName,
       email,
       password: hashedPassword,

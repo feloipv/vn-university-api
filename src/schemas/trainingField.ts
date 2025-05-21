@@ -1,7 +1,5 @@
-import { Types } from 'mongoose';
+import { isObjectId } from '@/utils/ValidateUtils';
 import { z } from 'zod';
-
-const isObjectId = (val: string) => Types.ObjectId.isValid(val);
 
 export const trainingFieldSchema = z.object({
   name: z
@@ -17,26 +15,8 @@ export const trainingFieldSchema = z.object({
     })
     .optional(),
 
-  universityIds: z
-    .array(
-      z
-        .string({
-          required_error: 'University ID must be a string',
-          invalid_type_error: 'University ID must be a string',
-        })
-        .refine(
-          (val) => isObjectId(val),
-          (val) => ({
-            message: `Invalid training field ID: ${val}`,
-          })
-        )
-    )
-    .optional(),
-});
-
-export const createTrainingFieldschema = trainingFieldSchema.pick({
-  name: true,
-  description: true,
+  universityIds: z.array(isObjectId('University ID')).optional(),
+  majorIds: z.array(isObjectId('Major Id')).optional(),
 });
 
 export type ITrainingField = z.infer<typeof trainingFieldSchema>;

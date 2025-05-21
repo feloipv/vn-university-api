@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '@/models/user';
+import { UserModel } from '@/models/user';
 import { CustomError } from '@/utils/errorUtils';
 import { generateTokens } from '@/utils/generateTokensUtils';
 
@@ -20,7 +20,7 @@ const refreshToken = async (
       process.env.REFRESH_TOKEN_SECRET as string
     ) as { userId: string };
 
-    const user = await User.findById(decoded.userId);
+    const user = await UserModel.findById(decoded.userId);
     if (!user) {
       throw new CustomError('User not found', 404);
     }

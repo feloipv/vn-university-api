@@ -1,6 +1,6 @@
 import sendEmail from '@/config/mailer';
-import User from '@/models/user';
-import { sendOtpSchema } from '@/schemas/auth';
+import { UserModel } from '@/models/user';
+import { IUser, sendOtpSchema } from '@/schemas/auth';
 import { CustomError } from '@/utils/errorUtils';
 import { generateOTP } from '@/utils/generateOTPUtils';
 import { validateData } from '@/utils/ValidateUtils';
@@ -10,7 +10,9 @@ const sendOTP = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email } = validateData(sendOtpSchema, req.body);
 
-    const user = await User.findOne({ email });
+    const user = await UserModel.findOne<IUser & { updatedAt: Date }>({
+      email,
+    });
 
     if (!user) {
       throw new CustomError('Incorrect email.', 400);
@@ -33,7 +35,7 @@ const sendOTP = async (req: Request, res: Response, next: NextFunction) => {
 
     const { otp, otpExpiresAt } = await generateOTP();
 
-    await User.findOneAndUpdate(
+    await UserModel.findOneAndUpdate(
       { email },
       { otp, otpExpiresAt },
       { new: true }

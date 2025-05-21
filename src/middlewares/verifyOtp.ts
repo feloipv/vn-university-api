@@ -1,4 +1,5 @@
-import User from '@/models/user';
+import { AuthenticatedRequest } from '@/interfaces/auth';
+import { UserModel } from '@/models/user';
 import { verifyOtpSchema } from '@/schemas/auth';
 import { CustomError } from '@/utils/errorUtils';
 import { validateData } from '@/utils/ValidateUtils';
@@ -8,7 +9,7 @@ const verifyOtp = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const { email, otp } = validateData(verifyOtpSchema, req.body);
 
-    const user = await User.findOne({ email });
+    const user = await UserModel.findOne({ email });
     if (!user) throw new CustomError('Incorrect email', 401);
 
     if (!otp || user.otp !== otp) {
@@ -22,7 +23,7 @@ const verifyOtp = async (req: Request, _res: Response, next: NextFunction) => {
       throw new CustomError('expired OTP', 400);
     }
 
-    req.user = user;
+    (req as unknown as AuthenticatedRequest).user = user;
     next();
   } catch (error) {
     next(error);

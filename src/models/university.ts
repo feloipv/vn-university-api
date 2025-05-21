@@ -1,8 +1,8 @@
-import { Iuniversity } from '@/schemas/university';
+import { IUniversity } from '@/schemas/university';
 import { PaginateModel, Schema, Types, model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
-const universitySchema = new Schema<Iuniversity>(
+const universitySchema = new Schema<IUniversity>(
   {
     name: { type: String, required: true },
     code: { type: String },
@@ -20,13 +20,49 @@ const universitySchema = new Schema<Iuniversity>(
     email: { type: String },
     phone: { type: String },
     admissionInfo: {
-      admissionMethod: { type: [String] },
-      admissionLink: { type: String },
+      methods: [
+        {
+          _id: false,
+          title: { type: String, required: true },
+          description: { type: String },
+          conditions: [{ type: String }],
+          documents: [{ type: String }],
+        },
+      ],
     },
-    trainingFieldIds: [
+    trainingFields: [
       {
-        type: Types.ObjectId,
-        ref: 'TrainingField',
+        _id: false,
+        trainingFieldId: {
+          type: Types.ObjectId,
+          ref: 'TrainingField',
+        },
+        majors: [
+          {
+            _id: false,
+            majorId: {
+              type: Types.ObjectId,
+              ref: 'Major',
+            },
+            scores: [
+              {
+                _id: false,
+                year: { type: Number, required: true },
+                thpt: { type: Number },
+                hocBa: { type: Number },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    campuses: [
+      {
+        _id: false,
+        name: { type: String },
+        address: { type: String },
+        phone: { type: String },
+        email: { type: String },
       },
     ],
     tuition: {
@@ -34,6 +70,7 @@ const universitySchema = new Schema<Iuniversity>(
       max: { type: Number },
       unit: { type: String, default: 'VND/year' },
     },
+
     rating: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
   },
@@ -45,7 +82,7 @@ const universitySchema = new Schema<Iuniversity>(
 
 universitySchema.plugin(mongoosePaginate);
 
-export const UniversityModel = model<Iuniversity, PaginateModel<Iuniversity>>(
+export const UniversityModel = model<IUniversity, PaginateModel<IUniversity>>(
   'University',
   universitySchema
 );

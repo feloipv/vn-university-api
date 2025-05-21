@@ -1,4 +1,5 @@
-import User from '@/models/user';
+import { AuthenticatedRequest } from '@/interfaces/auth';
+import { UserModel } from '@/models/user';
 import { CustomError } from '@/utils/errorUtils';
 import { Response, NextFunction, Request } from 'express';
 import jwt from 'jsonwebtoken';
@@ -21,7 +22,7 @@ const authenticate = async (
       userId: string;
     };
 
-    const user = await User.findById(decoded.userId);
+    const user = await UserModel.findById(decoded.userId);
     if (!user) {
       throw new CustomError('User does not exist', 404);
     }
@@ -30,7 +31,7 @@ const authenticate = async (
       throw new CustomError('Account not activated', 403);
     }
 
-    req.user = user;
+    (req as unknown as AuthenticatedRequest).user = user;
     next();
   } catch (error) {
     if (error instanceof Error && error.name === 'JsonWebTokenError') {

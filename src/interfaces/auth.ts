@@ -1,21 +1,5 @@
-import { Schema, Document } from 'mongoose';
+import { IUser } from '@/schemas/auth';
 
-export interface IUser extends Document {
-  userName: string;
-  email: string;
-  password: string;
-  role: 'user' | 'admin';
-  avatar?: string;
-  favorites: Schema.Types.ObjectId[];
-  otp?: string;
-  otpExpiresAt?: Date;
-  isActivate: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-declare module 'express' {
-  export interface Request {
-    user?: IUser;
-  }
+export interface AuthenticatedRequest extends Request {
+  user?: IUser;
 }

@@ -1,16 +1,17 @@
-import { NextFunction, Request, Response } from 'express';
-import User from '@/models/user';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { UserModel } from '@/models/user';
 import { generateTokens } from '@/utils/generateTokensUtils';
-import { IUser } from '@/interfaces/auth';
+import { IUser } from '@/schemas/auth';
+import { AuthenticatedRequest } from '@/interfaces/auth';
 
 const activateUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const { email } = req.user as IUser;
-    const newUser = await User.findOneAndUpdate(
+    const { email } = (req as unknown as AuthenticatedRequest).user as IUser;
+    const newUser = await UserModel.findOneAndUpdate(
       { email },
       {
         isActivate: true,

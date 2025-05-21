@@ -1,3 +1,4 @@
+import { MajorModel } from '@/models/major';
 import { TrainingFieldModel } from '@/models/trainingField';
 import { UniversityModel } from '@/models/university';
 import { universitySchema } from '@/schemas/university';
@@ -21,32 +22,84 @@ const createUniversity = async (
     );
     if (existing) throw new CustomError('University already exists', 400);
 
-    if (data.trainingFieldIds && data.trainingFieldIds.length > 0) {
-      const existingCategories = await TrainingFieldModel.find({
-        _id: { $in: data.trainingFieldIds },
-      }).session(session);
+    let trainingFieldIds: string[] = [];
 
-      const existingIds = existingCategories.map((c) => c._id.toString());
+    if (data.trainingFields && data.trainingFields.length > 0) {
+      const tfIdSet = new Set();
+      for (const tf of data.trainingFields) {
+        if (tfIdSet.has(tf.trainingFieldId)) {
+          throw new CustomError('Duplicate trainingFieldId detected', 400, [
+            tf.trainingFieldId,
+          ]);
+        }
+        tfIdSet.add(tf.trainingFieldId);
 
-      const invalidIds = data.trainingFieldIds.filter(
-        (id) => !existingIds.includes(id)
+        const majorIdSet = new Set();
+        for (const major of tf.majors || []) {
+          if (majorIdSet.has(major.majorId)) {
+            throw new CustomError('Duplicate majorId in a trainingField', 400, [
+              major.majorId,
+            ]);
+          }
+          majorIdSet.add(major.majorId);
+        }
+      }
+
+      trainingFieldIds = data.trainingFields.map(
+        (field) => field.trainingFieldId
       );
 
-      if (invalidIds.length > 0) {
+      // 1. Check training field IDs
+      const existingTrainingFields = await TrainingFieldModel.find({
+        _id: { $in: trainingFieldIds },
+      }).session(session);
+
+      const existingTFIds = existingTrainingFields.map((tf) =>
+        tf._id.toString()
+      );
+      const invalidTFIds = trainingFieldIds.filter(
+        (id) => !existingTFIds.includes(id)
+      );
+
+      if (invalidTFIds.length > 0) {
         throw new CustomError(
           'Some training field IDs do not exist',
           400,
-          invalidIds
+          invalidTFIds
         );
+      }
+
+      // 2. Check major IDs
+      const allMajorIds = data.trainingFields.flatMap(
+        (field) => field.majors?.map((m) => m.majorId) || []
+      );
+
+      if (allMajorIds.length > 0) {
+        const existingMajors = await MajorModel.find({
+          _id: { $in: allMajorIds },
+        }).session(session);
+
+        const existingMajorIds = existingMajors.map((m) => m._id.toString());
+        const invalidMajorIds = allMajorIds.filter(
+          (id) => !existingMajorIds.includes(id)
+        );
+
+        if (invalidMajorIds.length > 0) {
+          throw new CustomError(
+            'Some major IDs do not exist',
+            400,
+            invalidMajorIds
+          );
+        }
       }
     }
 
-    const newUniversity = await UniversityModel.create([{ ...data }], {
+    const newUniversity = await UniversityModel.create([data], {
       session,
     });
 
     await TrainingFieldModel.updateMany(
-      { _id: { $in: data.trainingFieldIds } },
+      { _id: { $in: trainingFieldIds } },
       { $addToSet: { universityIds: newUniversity[0]._id } },
       { session }
     );

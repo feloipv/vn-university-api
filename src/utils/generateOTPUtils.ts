@@ -1,4 +1,4 @@
-import User from '@/models/user';
+import { UserModel } from '@/models/user';
 import { CustomError } from './errorUtils';
 
 export const generateOTP = async (): Promise<{
@@ -15,7 +15,7 @@ export const generateOTP = async (): Promise<{
     otp = Math.floor(100000 + Math.random() * 900000).toString();
     otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    const existingUser = await User.findOne({ otp });
+    const existingUser = await UserModel.findOne({ otp });
 
     if (!existingUser) {
       isDuplicate = false;

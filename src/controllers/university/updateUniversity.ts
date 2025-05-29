@@ -23,36 +23,38 @@ const updateUniversity = async (
 
     // Nếu có cập nhật trainingFields
 
-    const newTrainingFieldIds =
-      data.trainingFields?.map((tf) => tf.trainingFieldId) || [];
+    if (data.trainingFields && data.trainingFields.length > 0) {
+      const newTrainingFieldIds =
+        data.trainingFields?.map((tf) => tf.trainingFieldId) || [];
 
-    // 1. Xoá ID trường đại học khỏi tất cả trainingField cũ
-    const oldTrainingFieldIds =
-      university.trainingFields?.map((tf) => tf.trainingFieldId.toString()) ||
-      [];
+      // 1. Xoá ID trường đại học khỏi tất cả trainingField cũ
+      const oldTrainingFieldIds =
+        university.trainingFields?.map((tf) => tf.trainingFieldId.toString()) ||
+        [];
 
-    const added = newTrainingFieldIds.filter(
-      (id) => !oldTrainingFieldIds.includes(id)
-    );
-    const removed = oldTrainingFieldIds.filter(
-      (id) => !newTrainingFieldIds.includes(id)
-    );
-
-    if (removed.length > 0) {
-      await TrainingFieldModel.updateMany(
-        { _id: { $in: removed } },
-        { $pull: { universityIds: university._id } },
-        { session }
+      const added = newTrainingFieldIds.filter(
+        (id) => !oldTrainingFieldIds.includes(id)
       );
-    }
-
-    // 2. Thêm ID trường đại học vào các trainingField mới
-    if (added.length > 0) {
-      await TrainingFieldModel.updateMany(
-        { _id: { $in: added } },
-        { $addToSet: { universityIds: university._id } },
-        { session }
+      const removed = oldTrainingFieldIds.filter(
+        (id) => !newTrainingFieldIds.includes(id)
       );
+
+      if (removed.length > 0) {
+        await TrainingFieldModel.updateMany(
+          { _id: { $in: removed } },
+          { $pull: { universityIds: university._id } },
+          { session }
+        );
+      }
+
+      // 2. Thêm ID trường đại học vào các trainingField mới
+      if (added.length > 0) {
+        await TrainingFieldModel.updateMany(
+          { _id: { $in: added } },
+          { $addToSet: { universityIds: university._id } },
+          { session }
+        );
+      }
     }
 
     const updatedUniversity = await UniversityModel.findByIdAndUpdate(

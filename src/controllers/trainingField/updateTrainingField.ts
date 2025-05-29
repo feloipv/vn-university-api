@@ -24,75 +24,76 @@ const updateTrainingField = async (
       await TrainingFieldModel.findById(id).session(session);
     if (!trainingField) throw new CustomError('TrainingField not found', 404);
 
-    // So sánh universityIds
-    const oldUniversityIds =
-      trainingField.universityIds?.map((id) => String(id)) || [];
-    const newUniversityIds = data.universityIds || [];
+    if (data.universityIds && data.universityIds.length > 0) {
+      const oldUniversityIds =
+        trainingField.universityIds?.map((id) => String(id)) || [];
+      const newUniversityIds = data.universityIds || [];
 
-    const universityAdded = newUniversityIds.filter(
-      (id) => !oldUniversityIds.includes(id)
-    );
-    const universityRemoved = oldUniversityIds.filter(
-      (id) => !newUniversityIds.includes(id)
-    );
+      const universityAdded = newUniversityIds.filter(
+        (id) => !oldUniversityIds.includes(id)
+      );
+      const universityRemoved = oldUniversityIds.filter(
+        (id) => !newUniversityIds.includes(id)
+      );
 
-    // So sánh majorIds
-    const oldMajorIds = trainingField.majorIds?.map((id) => String(id)) || [];
-    const newMajorIds = data.majorIds || [];
+      if (universityAdded.length > 0) {
+        await UniversityModel.updateMany(
+          { _id: { $in: universityAdded } },
+          { $addToSet: { trainingFieldIds: id } },
+          { session }
+        );
+      }
+      if (universityRemoved.length > 0) {
+        await UniversityModel.updateMany(
+          { _id: { $in: universityRemoved } },
+          { $pull: { trainingFieldIds: id } },
+          { session }
+        );
+      }
+    }
 
-    const majorAdded = newMajorIds.filter((id) => !oldMajorIds.includes(id));
-    const majorRemoved = oldMajorIds.filter((id) => !newMajorIds.includes(id));
+    if (data.majorIds && data.majorIds.length > 0) {
+      const oldMajorIds = trainingField.majorIds?.map((id) => String(id)) || [];
+      const newMajorIds = data.majorIds || [];
 
-    // Cập nhật TrainingField
+      const majorAdded = newMajorIds.filter((id) => !oldMajorIds.includes(id));
+      const majorRemoved = oldMajorIds.filter(
+        (id) => !newMajorIds.includes(id)
+      );
+
+      if (majorAdded.length > 0) {
+        await MajorModel.updateMany(
+          { _id: { $in: majorAdded } },
+          { $addToSet: { trainingFieldIds: id } },
+          { session }
+        );
+      }
+      if (majorRemoved.length > 0) {
+        await MajorModel.updateMany(
+          { _id: { $in: majorRemoved } },
+          { $pull: { trainingFieldIds: id } },
+          { session }
+        );
+
+        await UniversityModel.updateMany(
+          { 'trainingFields.trainingFieldId': id },
+          {
+            $pull: {
+              'trainingFields.$[].majors': {
+                majorId: { $in: majorRemoved },
+              },
+            },
+          },
+          { session }
+        );
+      }
+    }
+
     const updated = await TrainingFieldModel.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,
       session,
     });
-
-    // Cập nhật UniversityModel
-    if (universityAdded.length > 0) {
-      await UniversityModel.updateMany(
-        { _id: { $in: universityAdded } },
-        { $addToSet: { trainingFieldIds: id } },
-        { session }
-      );
-    }
-    if (universityRemoved.length > 0) {
-      await UniversityModel.updateMany(
-        { _id: { $in: universityRemoved } },
-        { $pull: { trainingFieldIds: id } },
-        { session }
-      );
-    }
-
-    // Cập nhật MajorModel
-    if (majorAdded.length > 0) {
-      await MajorModel.updateMany(
-        { _id: { $in: majorAdded } },
-        { $addToSet: { trainingFieldIds: id } },
-        { session }
-      );
-    }
-    if (majorRemoved.length > 0) {
-      await MajorModel.updateMany(
-        { _id: { $in: majorRemoved } },
-        { $pull: { trainingFieldIds: id } },
-        { session }
-      );
-
-      await UniversityModel.updateMany(
-        { 'trainingFields.trainingFieldId': id },
-        {
-          $pull: {
-            'trainingFields.$[].majors': {
-              majorId: { $in: majorRemoved },
-            },
-          },
-        },
-        { session }
-      );
-    }
 
     await session.commitTransaction();
 

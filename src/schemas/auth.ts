@@ -1,3 +1,4 @@
+import { Document } from 'mongoose';
 import { z } from 'zod';
 
 export const applyPasswordMatchRefine = <T extends z.ZodTypeAny>(schema: T) =>
@@ -32,11 +33,14 @@ export const userSchema = z.object({
     .string({ required_error: 'Avatar URL is required' })
     .url('Avatar URL must be a valid link starting with http:// or https://')
     .nullable(),
-  favorites: z
+  favoriteUniversityIds: z
     .array(
       z
         .string()
-        .length(24, 'Each favorite ID must be a valid 24-character ObjectId')
+        .length(
+          24,
+          'Each favorite university ID must be a valid 24-character ObjectId'
+        )
     )
     .default([]),
   otp: z
@@ -83,4 +87,4 @@ export const verifyOtpSchema = userSchema
 
 export const signinSchema = userSchema.pick({ email: true, password: true });
 
-export type IUser = z.infer<typeof userSchema>;
+export type IUser = z.infer<typeof userSchema> & Document;

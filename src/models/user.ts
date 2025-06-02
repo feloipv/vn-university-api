@@ -14,7 +14,7 @@ const userSchema = new Schema<IUser>(
       default: 'user',
     },
     avatar: { type: String, default: '' },
-    favorites: [{ type: Schema.Types.ObjectId, ref: 'University' }],
+    favoriteUniversityIds: [{ type: Schema.Types.ObjectId, ref: 'University' }],
     otp: { type: String },
     otpExpiresAt: { type: Date },
     isActivate: { type: Boolean, default: false },

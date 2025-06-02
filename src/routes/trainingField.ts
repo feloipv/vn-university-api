@@ -5,27 +5,27 @@ import express from 'express';
 const trainingFieldRouter = express.Router();
 
 trainingFieldRouter.get(
-  '/training_fields',
+  '/training-fields',
   authenticate,
   tfCtrl.getTrainingField
 );
 trainingFieldRouter.get(
-  '/training_field/:id',
+  '/training-field/:id',
   authenticate,
   tfCtrl.getTrainingFieldById
 );
 trainingFieldRouter.post(
-  '/training_field',
+  '/training-field',
   authenticate,
   tfCtrl.createTrainingField
 );
 trainingFieldRouter.patch(
-  '/training_field/:id',
+  '/training-field/:id',
   authenticate,
   tfCtrl.updateTrainingField
 );
 trainingFieldRouter.delete(
-  '/training_field/:id',
+  '/training-field/:id',
   authenticate,
   tfCtrl.deleteTrainingField
 );

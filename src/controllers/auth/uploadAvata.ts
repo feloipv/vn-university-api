@@ -25,7 +25,7 @@ const uploadAvatar = async (
       );
     }
 
-    const uploadResult = await uploadImage(req.file, 'avatar');
+    const uploadResult = await uploadImage(req.file, `avatar/${user._id}`);
 
     if (publicId) {
       const destroyResult = await cloudinary.uploader.destroy(publicId);
